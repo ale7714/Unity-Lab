@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     environment:
-      CC_TEST_REPORTER_ID: 633cb615def2956cb2c4b0817b54f0e5b15bb8c42d9f9b921b8b2e02b217c369
+      CC_TEST_REPORTER_ID: 21eaff1aabb267bc5f3560c7c82b60434eefca14d10d15c29028042249e01354
 
     docker:
       - image: circleci/python:3.6
@@ -54,23 +54,24 @@ jobs:
             - ~/miniconda3
           key: v1-dependencies-{{ checksum "environment.yml" }}
 
-      # - run:
-      #     name: Run Python tests
-      #     command: |
-      #       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      #       chmod +x ./cc-test-reporter
-      #       ./cc-test-reporter before-build
-      #       source activate lab
-      #       python setup.py test
-      #       ./cc-test-reporter after-build -t coverage.py --exit-code $? .coverage
-
       - run:
           name: Run Python tests
           command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+            ./cc-test-reporter before-build
             source activate lab
             python setup.py test
-      - store_test_results:
-          path: .coverage
+            cat coverage.xml
+            ./cc-test-reporter after-build --exit-code $? .coverage --prefix ~/Unity-Lab
+
+      # - run:
+      #     name: Run Python tests
+      #     command: |
+      #       source activate lab
+      #       python setup.py test
+      # - store_test_results:
+      #     path: .coverage
 
 workflows:
   version: 2
